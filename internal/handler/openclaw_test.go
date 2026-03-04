@@ -148,6 +148,11 @@ func (m *mockOutboundRepo) CountByAccountIDAndStatus(ctx context.Context, accoun
 	return args.Int(0), args.Error(1)
 }
 
+func (m *mockOutboundRepo) CountByAccountIDAndStatusSince(ctx context.Context, accountID string, status model.OutboundMessageStatus, since time.Time) (int, error) {
+	args := m.Called(ctx, accountID, status, since)
+	return args.Int(0), args.Error(1)
+}
+
 func (m *mockOutboundRepo) CountByAccountIDSince(ctx context.Context, accountID string, since time.Time) (int, error) {
 	args := m.Called(ctx, accountID, since)
 	return args.Int(0), args.Error(1)
@@ -181,6 +186,11 @@ func (m *mockOutboundRepo) CountByConversationKeySince(ctx context.Context, conv
 
 func (m *mockOutboundRepo) CountByConversationKeyAndStatus(ctx context.Context, conversationKey string, status model.OutboundMessageStatus) (int, error) {
 	args := m.Called(ctx, conversationKey, status)
+	return args.Int(0), args.Error(1)
+}
+
+func (m *mockOutboundRepo) CountByConversationKeyAndStatusSince(ctx context.Context, conversationKey string, status model.OutboundMessageStatus, since time.Time) (int, error) {
+	args := m.Called(ctx, conversationKey, status, since)
 	return args.Int(0), args.Error(1)
 }
 

@@ -141,7 +141,7 @@ export default function DashboardPage() {
   const getHealthStatus = () => {
     if (!stats) return { status: 'unknown', color: 'text-muted-foreground', label: '확인 중...' };
     
-    const hasErrors = stats.messages.outbound.failed > 0;
+    const hasErrors = stats.messages.outbound.todayFailed > 0;
     const hasQueued = stats.messages.inbound.queued > 5;
     const hasConnections = stats.connections.paired > 0;
     
@@ -253,9 +253,9 @@ export default function DashboardPage() {
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
               전체: {stats?.messages.outbound.total ?? 0}개
-              {(stats?.messages.outbound.failed ?? 0) > 0 && (
+              {((stats?.messages.outbound.todayFailed ?? 0) > 0 || (stats?.messages.outbound.failed ?? 0) > 0) && (
                 <span className="ml-2 text-red-500">
-                  (실패 {stats?.messages.outbound.failed}개)
+                  (오늘 실패 {stats?.messages.outbound.todayFailed ?? 0}개 / 누적 실패 {stats?.messages.outbound.failed ?? 0}개)
                 </span>
               )}
             </p>

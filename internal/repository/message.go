@@ -182,10 +182,12 @@ type OutboundMessageRepository interface {
 	CountByConversationKey(ctx context.Context, conversationKey string) (int, error)
 	CountByConversationKeySince(ctx context.Context, conversationKey string, since time.Time) (int, error)
 	CountByConversationKeyAndStatus(ctx context.Context, conversationKey string, status model.OutboundMessageStatus) (int, error)
+	CountByConversationKeyAndStatusSince(ctx context.Context, conversationKey string, status model.OutboundMessageStatus, since time.Time) (int, error)
 	Create(ctx context.Context, params model.CreateOutboundMessageParams) (*model.OutboundMessage, error)
 	MarkSent(ctx context.Context, id string) error
 	MarkFailed(ctx context.Context, id string, errorMsg string) error
 	CountByAccountIDAndStatus(ctx context.Context, accountID string, status model.OutboundMessageStatus) (int, error)
+	CountByAccountIDAndStatusSince(ctx context.Context, accountID string, status model.OutboundMessageStatus, since time.Time) (int, error)
 	CountByAccountIDSince(ctx context.Context, accountID string, since time.Time) (int, error)
 	FindRecentFailedByAccountID(ctx context.Context, accountID string, limit int) ([]model.OutboundMessage, error)
 }
@@ -270,6 +272,15 @@ func (r *outboundMessageRepo) CountByConversationKeyAndStatus(ctx context.Contex
 	return count, err
 }
 
+func (r *outboundMessageRepo) CountByConversationKeyAndStatusSince(ctx context.Context, conversationKey string, status model.OutboundMessageStatus, since time.Time) (int, error) {
+	var count int
+	err := r.db.GetContext(ctx, &count, `
+		SELECT COUNT(*) FROM outbound_messages
+		WHERE conversation_key = $1 AND status = $2 AND created_at >= $3
+	`, conversationKey, status, since)
+	return count, err
+}
+
 func (r *outboundMessageRepo) Create(ctx context.Context, params model.CreateOutboundMessageParams) (*model.OutboundMessage, error) {
 	var msg model.OutboundMessage
 	err := r.db.GetContext(ctx, &msg, `
@@ -310,6 +321,15 @@ func (r *outboundMessageRepo) CountByAccountIDAndStatus(ctx context.Context, acc
 	err := r.db.GetContext(ctx, &count, `
 		SELECT COUNT(*) FROM outbound_messages WHERE account_id = $1 AND status = $2
 	`, accountID, status)
+	return count, err
+}
+
+func (r *outboundMessageRepo) CountByAccountIDAndStatusSince(ctx context.Context, accountID string, status model.OutboundMessageStatus, since time.Time) (int, error) {
+	var count int
+	err := r.db.GetContext(ctx, &count, `
+		SELECT COUNT(*) FROM outbound_messages
+		WHERE account_id = $1 AND status = $2 AND created_at >= $3
+	`, accountID, status, since)
 	return count, err
 }
 

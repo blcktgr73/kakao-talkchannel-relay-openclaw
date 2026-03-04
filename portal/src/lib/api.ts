@@ -80,6 +80,7 @@ export interface UserStats {
     };
     outbound: {
       today: number;
+      todayFailed: number;
       total: number;
       sent: number;
       failed: number;
@@ -98,6 +99,7 @@ export interface ConversationStats {
     };
     outbound: {
       today: number;
+      todayFailed: number;
       total: number;
       failed: number;
     };

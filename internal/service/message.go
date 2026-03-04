@@ -144,10 +144,11 @@ type UserStats struct {
 			Expired int `json:"expired"`
 		} `json:"inbound"`
 		Outbound struct {
-			Today  int `json:"today"`
-			Total  int `json:"total"`
-			Sent   int `json:"sent"`
-			Failed int `json:"failed"`
+			Today       int `json:"today"`
+			TodayFailed int `json:"todayFailed"`
+			Total       int `json:"total"`
+			Sent        int `json:"sent"`
+			Failed      int `json:"failed"`
 		} `json:"outbound"`
 	} `json:"messages"`
 	RecentErrors []RecentError `json:"recentErrors"`
@@ -226,6 +227,12 @@ func (s *MessageService) GetUserStats(ctx context.Context, accountID string, con
 		return nil, fmt.Errorf("count failed messages: %w", err)
 	}
 	stats.Messages.Outbound.Failed = failedCount
+
+	failedTodayCount, err := s.outboundRepo.CountByAccountIDAndStatusSince(ctx, accountID, model.OutboundStatusFailed, todayStart)
+	if err != nil {
+		return nil, fmt.Errorf("count failed messages today: %w", err)
+	}
+	stats.Messages.Outbound.TodayFailed = failedTodayCount
 
 	failedMsgs, err := s.outboundRepo.FindRecentFailedByAccountID(ctx, accountID, 5)
 	if err != nil {
@@ -430,9 +437,10 @@ type ConversationStats struct {
 			Total int `json:"total"`
 		} `json:"inbound"`
 		Outbound struct {
-			Today  int `json:"today"`
-			Total  int `json:"total"`
-			Failed int `json:"failed"`
+			Today       int `json:"today"`
+			TodayFailed int `json:"todayFailed"`
+			Total       int `json:"total"`
+			Failed      int `json:"failed"`
 		} `json:"outbound"`
 	} `json:"messages"`
 }
@@ -475,6 +483,12 @@ func (s *MessageService) GetConversationStats(ctx context.Context, conversationK
 		return nil, fmt.Errorf("count failed messages: %w", err)
 	}
 	stats.Messages.Outbound.Failed = failedCount
+
+	failedTodayCount, err := s.outboundRepo.CountByConversationKeyAndStatusSince(ctx, conversationKey, model.OutboundStatusFailed, todayStart)
+	if err != nil {
+		return nil, fmt.Errorf("count failed messages today: %w", err)
+	}
+	stats.Messages.Outbound.TodayFailed = failedTodayCount
 
 	return stats, nil
 }
