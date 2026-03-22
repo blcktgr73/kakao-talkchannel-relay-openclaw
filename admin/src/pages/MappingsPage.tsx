@@ -17,7 +17,7 @@ export function MappingsPage() {
     setLoading(true);
     try {
       const data = await api.getMappings(limit, offset, accountId || undefined);
-      setMappings(data.items);
+      setMappings(data.items || []);
       setTotal(data.total);
     } catch (error) {
       console.error(error);

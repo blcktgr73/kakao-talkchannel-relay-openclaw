@@ -22,7 +22,7 @@ export function MessagesPage() {
     try {
       const fetcher = activeTab === 'inbound' ? api.getInboundMessages : api.getOutboundMessages;
       const data = await fetcher(limit, offset, accountId || undefined, status || undefined);
-      setMessages(data.items);
+      setMessages(data.items || []);
       setTotal(data.total);
     } catch (error) {
       console.error(error);
