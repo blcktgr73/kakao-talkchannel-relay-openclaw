@@ -22,7 +22,7 @@ export function UsersPage(): React.ReactElement {
 
   // Client-side filtering
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    return (users || []).filter((user) => {
       const matchesSearch = searchQuery === '' ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus =
@@ -39,7 +39,7 @@ export function UsersPage(): React.ReactElement {
       setError(null);
       const offset = currentPage * PAGE_SIZE;
       const { items, total: totalCount } = await api.getUsers(PAGE_SIZE, offset);
-      setUsers(items);
+      setUsers(items || []);
       setTotal(totalCount);
     } catch (err) {
       setError(err instanceof Error ? err.message : '사용자를 불러오는데 실패했습니다.');

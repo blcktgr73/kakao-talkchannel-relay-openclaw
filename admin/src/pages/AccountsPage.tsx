@@ -26,7 +26,7 @@ export function AccountsPage() {
 
   // Client-side filtering
   const filteredAccounts = useMemo(() => {
-    return accounts.filter((account) => {
+    return (accounts || []).filter((account) => {
       const matchesSearch = searchQuery === '' ||
         account.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (account.openclawUserId && account.openclawUserId.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -39,7 +39,7 @@ export function AccountsPage() {
     setLoading(true);
     try {
       const data = await api.getAccounts(limit, offset);
-      setAccounts(data.items);
+      setAccounts(data.items || []);
       setTotal(data.total);
     } catch (error) {
       console.error(error);

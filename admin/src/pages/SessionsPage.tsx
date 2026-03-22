@@ -33,7 +33,7 @@ export function SessionsPage() {
 
   // Client-side filtering
   const filteredSessions = useMemo(() => {
-    return sessions.filter((session) => {
+    return (sessions || []).filter((session) => {
       const matchesSearch = searchQuery === '' ||
         session.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         session.pairingCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,7 +47,7 @@ export function SessionsPage() {
     setLoading(true);
     try {
       const data = await api.getSessions(limit, offset);
-      setSessions(data.items);
+      setSessions(data.items || []);
       setTotal(data.total);
     } catch (error) {
       console.error(error);
